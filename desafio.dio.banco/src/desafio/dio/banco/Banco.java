@@ -25,9 +25,9 @@ public class Banco {
 		gerenciador.addCadastro(conta1);
 		
 		gerenciador.depositar(1, 50);
-		System.out.println(gerenciador);
-		gerenciador.transferir(1, 2, 25);
-		
+		gerenciador.sacar(1, 15);
+		gerenciador.transferir(1, 2, 40);
+		gerenciador.saldo(2);
 	}
 
 }

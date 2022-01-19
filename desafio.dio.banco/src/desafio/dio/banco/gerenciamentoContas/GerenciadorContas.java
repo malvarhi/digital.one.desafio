@@ -1,81 +1,76 @@
 package desafio.dio.banco.gerenciamentoContas;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
 import desafio.dio.banco.conta.Conta;
 
 public class GerenciadorContas extends ValidarContas{
-		private List<Conta> contas;
-		
-	public GerenciadorContas() {
-		contas = new ArrayList<Conta>();
-		
-	}
 	
 	public void addCadastro(Conta conta) {
-		this.contas.add(conta);
+		super.addCadastro(conta);
 	}
 	
 	public void depositar(int numConta, double valorDeposito) {
-			boolean flag=true;
-			for (Conta conta : contas) {
-				if(conta.getNumConta()==numConta) {
-					if(valorDeposito>0) {
-						conta.depositar(valorDeposito);
-						flag=false;
-					}else {
-						System.out.println("Valor do deposito invalido");
-					}
+		Conta conta = verificarConta(numConta);
+		if(conta==null) {
+			System.out.println("O numero da conta não existe");
+		}else if(conta.getNumConta()==numConta) {
+			if(validarDepositoSaque(valorDeposito, "O DEPOSITO", conta)) {
+				conta.depositar(valorDeposito);
+				System.out.println("=======================");
+				System.out.println("Cliente :"+conta.getCliente().getNome());
+				System.out.println("Valor depositado: "+valorDeposito);
+				System.out.println("Saldo Atual :"+conta.getSaldo());
+				System.out.println("=======================");
+			}
+		}	
+	}
+	
+	public void sacar(int numConta, double valorSaque) {
+		Conta conta = verificarConta(numConta);
+		if(conta==null) {
+			System.out.println("O numero da conta não existe");
+		}else if(conta.getNumConta()==numConta) {
+			if(validarDepositoSaque(valorSaque, "O SAQUE", conta)) {
+				if(conta.sacar(valorSaque)) {
+					System.out.println("=======================");
+					System.out.println("Cliente :"+conta.getCliente().getNome());
+					System.out.println("Valor do saque: "+valorSaque);
+					System.out.println("Saldo Atual :"+conta.getSaldo());
+					System.out.println("=======================");
 				}
 			}
-			
-			if(flag)System.out.println("Numero de conta invalida");
-		
-		
-		
-	}
-	
-	public void transferir(int contaOrigin, int contaDestino, double valor) {
-		Conta tempContaOrigin = verificarConta(contaOrigin);
-		Conta tempContaDestino = verificarConta(contaDestino);
-		System.out.println(contaDestino);
-		if(tempContaOrigin.getSaldo()>valor) {
-			System.out.println("Conta destino: "+tempContaDestino.getNumConta()+
-					"\nConta Destino: "+tempContaDestino.getCliente().getNome()+
-					"\nValor: "+valor);
-			System.out.println("Deseja mesmo realizar a transferencia? Digite S para sim e N para não");
-		}
-		Scanner scan=new Scanner(System.in);
-		String resposta = scan.nextLine();
-		scan.close();
-		if(confirmarTransferencia(resposta)) {
-			tempContaOrigin.sacar(valor);
-			tempContaDestino.depositar(valor);
-			System.out.println("\nValor depositado: "+valor+"\nConta Destinataria: "+tempContaDestino.getCliente().getNome());
-		}else {
-			System.out.println("\nOperação cancelada");
-		}
-	}
-
-	
-	private boolean confirmarTransferencia(String resposta){
-		if(resposta.equalsIgnoreCase("S")) {
-			return true;
-		}else if(resposta.equalsIgnoreCase("N")){
-			return false;
-		}else {
-			return false;
 		}
 	}
 	
-	public String toString() {
-		return getContas().toString();
-	}
-
-	private List<Conta> getContas() {
-		return contas;
+	public void transferir(int contaOrigem, int contaDestino, double valorTransf) {
+		Conta contaOrigin = verificarConta(contaOrigem);
+		Conta contaDestin = verificarConta(contaDestino);
+		if(contaOrigin==null) {
+			System.out.println("O numero da conta de origem não existe");
+		}else if(contaDestin==null) {
+			System.out.println("O numero da conta de destino não existe");
+		}else if(contaOrigin.getNumConta()==contaOrigem && contaDestin.getNumConta()==contaDestino) {
+			if(validarDepositoSaque(valorTransf, "A TRANSFERENCIA",contaDestin)) {
+				if(contaOrigin.sacar(valorTransf)) {
+					contaDestin.depositar(valorTransf);
+					System.out.println("=======================");
+					System.out.println("Transferencia realizada para :"+contaDestin.getCliente().getNome());
+					System.out.println("Valor da transferencia: "+valorTransf);
+					System.out.println("Saldo Atual :"+contaOrigin.getSaldo());
+					System.out.println("=======================");
+				}
+			}
+		}
 	}
 	
+	
+	public void saldo(int numConta) {
+		Conta conta = verificarConta(numConta);
+		if(conta==null) {
+			System.out.println("O numero desta conta não existe");
+		}else if(conta.getNumConta()==numConta){
+			System.out.println("=======================");
+			System.out.println(conta.getCliente().getNome()+" seu saldo atual é de :"+conta.getSaldo());
+			System.out.println("=======================");
+		}
+	}
 }

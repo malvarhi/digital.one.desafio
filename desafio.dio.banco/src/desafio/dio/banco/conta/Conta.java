@@ -30,13 +30,15 @@ public abstract class Conta{
 		System.out.println("Saldo Atual: "+getSaldo());
 	}
 	
-	public void sacar(double valor) {
+	public boolean sacar(double valor) {
 		if(getSaldo()<valor) {
-			System.out.println("Valor para saque invalido");
+			System.out.println("Saldo Insuficiente");
+			return false;
 		}else if(getSaldo()>valor) {
 			setSaldo(getSaldo()-valor);
-			extrato();
+			return true;
 		}
+		return false;
 	}
 	
 	private void vincularCliente(Cliente cliente) {
